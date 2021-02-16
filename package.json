@@ -4,8 +4,11 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "build": "babel ./src --out-dir ./build",
-    "start": "nodemon --exec babel-node src/index.js"
+    "clean": "rm -rf build && mkdir build",
+    "build-server": "babel ./src --out-dir ./build",
+    "build": "npm run clean && npm run build-server",
+    "dev": "nodemon --exec babel-node src/index.js",
+    "start": "node ./build/index.js"
   },
   "dependencies": {
     "apollo-server-express": "^2.19.2",
