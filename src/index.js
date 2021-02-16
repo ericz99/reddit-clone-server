@@ -54,16 +54,6 @@ const server = new ApolloServer({
 const app = express();
 app.use(cors());
 
-// # for static files
-app.use(express.static(path.resolve(__dirname, '..', '..', '/web/build')));
-
-// # for our build index.html
-app.get('*', (req, res) => {
-  if (process.env.NODE_ENV === 'production') {
-    res.sendFile(path.resolve(__dirname, '..', '..', '/web/build', 'index.html'));
-  }
-});
-
 server.applyMiddleware({ app, cors: false });
 
 app.listen({ port: config.port }, () =>
