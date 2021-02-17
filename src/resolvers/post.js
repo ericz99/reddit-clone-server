@@ -50,14 +50,12 @@ export default {
         const community = await Community.findOne({ name: comName });
         const data = await Post.create({ ...args, author: owner, community: community.id });
         // # add new post into community ref
-        community.posts.push(data.id);
-        await community.save();
+        await Community.updateOne({ name: comName }, { $push: { posts: [data.id] } });
         return {
           ok: true,
           post: data,
         };
       } catch (e) {
-        console.log(e);
         if (e) {
           return {
             ok: false,
