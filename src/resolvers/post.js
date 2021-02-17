@@ -49,6 +49,9 @@ export default {
         const owner = context.me.id;
         const community = await Community.findOne({ name: comName });
         const data = await Post.create({ ...args, author: owner, community: community.id });
+        // # add new post into community ref
+        community.posts.push(data.id);
+        await community.save();
         return {
           ok: true,
           post: data,
@@ -65,8 +68,11 @@ export default {
     },
     removePost: async (root, { id }, context, info) => {
       try {
-        await Post.deleteOne({ _id: id });
-        await Comment.deleteMany({ post: id });
+        await Promise.all([
+          Post.deleteOne({ _id: id }),
+          Comment.deleteMany({ post: id }),
+          Community.updateMany({}, { $pull: { posts: { id } } }, { multi: true }),
+        ]);
         return {
           ok: true,
           errors: [],
@@ -82,15 +88,17 @@ export default {
     },
     updatePost: async (root, { id, ...rest }, context, info) => {
       try {
-        await Post.updateOne(
-          { _id: id },
-          { $set: { ...rest } },
-          {
-            returnOriginal: false,
-            new: true,
-          }
-        );
-
+        await Promise.all([
+          Post.updateOne(
+            { _id: id },
+            { $set: { ...rest } },
+            {
+              returnOriginal: false,
+              new: true,
+            }
+          ),
+          Community.updateOne({ 'posts.id': id }, { $set: { ...rest } }),
+        ]);
         return {
           ok: true,
           errors: [],
