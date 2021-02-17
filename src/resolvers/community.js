@@ -3,11 +3,13 @@ import formatError from '../formatError';
 
 export default {
   Query: {
-    getCommunity: (root, { name }, context, info) => {
-      return Community.findOne({ name });
+    getCommunity: async (root, { name }, context, info) => {
+      const comm = await Community.findOne({ name });
+      return comm;
     },
-    getCommunities: (root, args, context, info) => {
-      return Community.find({}).sort({ createdAt: -1 });
+    getCommunities: async (root, args, context, info) => {
+      const comms = await Community.find({}).sort({ createdAt: -1 });
+      return comms;
     },
   },
   Mutation: {
