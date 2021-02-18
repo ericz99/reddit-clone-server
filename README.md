@@ -13,12 +13,17 @@ Quick start:
 
 ```bash
 
-# To run server
+# To build server
+yarn run build
+
+# To run build server
 yarn run start
+
+# To run dev server
+yarn run dev
 
 # To deploy on heroku
 heroku create && git commit -m "Deploying on heroku" && git push heroku master
-
 
 ```
 
